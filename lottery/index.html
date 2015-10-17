@@ -1,0 +1,195 @@
+<!doctype html>  
+<html lang="cn" style="font-size: 10px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="apple-touch-fullscreen" content="YES">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"> -->
+    <script type="text/javascript">
+        var phoneWidth = parseInt(window.screen.width);
+        var phoneScale = phoneWidth/640;
+
+        var ua = navigator.userAgent;
+        if (/Android (\d+\.\d+)/.test(ua)){
+            var version = parseFloat(RegExp.$1);
+            // andriod 2.3
+            if(version>2.3){
+                document.write('<meta name="viewport" content="width=640, minimum-scale = '+phoneScale+', maximum-scale = '+phoneScale+', target-densitydpi=device-dpi">');
+            // andriod 2.3以上
+            }else{
+                document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');
+            }
+            // 其他系统
+        } else {
+            document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');
+        }
+    </script>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="pragram" content="no-cache">
+    <link rel="stylesheet" href="css/main.css"/>
+	<script src="js/zepto.min.js"></script>
+	<script src="js/main.js"></script>	
+    <title>myshot</title>
+</head>
+<body>
+<div class="fullmask"></div>
+<div class="shareview none" >
+	<div class="sharetips">点击右上角分享<br>看看身边有没有能中500万的人吧</div>
+</div>
+<div class="pageloading">
+	<div class="loader1">
+		<i></i>
+		<i></i>
+	</div>
+</div>
+<div class="lottery">
+	<div class="page1 ">
+		<div class="intro">
+			<span class="l">至少选择6个红球，1一个篮球</span>
+			<div class="gorule r">玩法说明</div>
+		</div>
+		<div class="main">
+			<div class="red-ball ">
+				<ul>
+					<li value="1">01</li>
+					<li value="2">02</li>
+					<li value="3">03</li>
+					<li value="4">04</li>
+					<li value="5">05</li>
+					<li value="6">06</li>
+					<li value="7">07</li>
+					<li value="8">08</li>
+					<li value="9">09</li>
+					<li value="10">10</li>
+					<li value="11">11</li>
+					<li value="12">12</li>
+					<li value="13">13</li>
+					<li value="14">14</li>
+					<li value="15">15</li>
+					<li value="16">16</li>
+					<li value="17">17</li>
+					<li value="18">18</li>
+					<li value="19">19</li>
+					<li value="20">20</li>
+					<li value="21">21</li>
+					<li value="22">22</li>
+					<li value="23">23</li>
+					<li value="24">24</li>
+					<li value="25">25</li>
+					<li value="26">26</li>
+					<li value="27">27</li>
+					<li value="28">28</li>
+					<li value="29">29</li>
+					<li value="30">30</li>
+					<li value="31">31</li>
+					<li value="32">32</li>
+					<li value="33">33</li>
+				</ul>
+			</div>
+			<div class="blue-ball">
+				<ul>
+					<li value="1">01</li>
+					<li value="2">02</li>
+					<li value="3">03</li>
+					<li value="4">04</li>
+					<li value="5">05</li>
+					<li value="6">06</li>
+					<li value="7">07</li>
+					<li value="8">08</li>
+					<li value="9">09</li>
+					<li value="10">10</li>
+					<li value="11">11</li>
+					<li value="12">12</li>
+					<li value="13">13</li>
+					<li value="14">14</li>
+					<li value="15">15</li>
+					<li value="16">16</li>
+				</ul>
+			</div>
+			<div class=""></div>
+		</div>
+	</div>
+	<div class="page2">
+		
+		<h1>试试看<br />你是能中500万的人吗</h1>
+		<div class="rule">
+			<h2>规则</h2>
+			<p>一等奖：中6+1，单注奖金5000000</p>
+			<p>二等奖：中6+0，单注奖金150000</p>
+			<p>三等奖：中5+1，单注奖金3000</p>
+			<p>四等奖：中5+0、4+1，单注奖金200</p>
+			<p>五等奖：中4+0、3+1，单注奖金10</p>
+			<p>六等奖：中2+1、1+1、0+1，单注奖金5</p>
+			<p>注：单注奖金达到10000以上需缴纳20%个人所得税</p>
+		</div>
+	</div>
+	<div class="page3">
+		<div class="result">
+			<h5>至少中三等奖以上才显示详情</h5>
+			<!-- <p>第20期：中一等奖</p>
+			<p>中奖号码：02 04 12 18 26 33|12</p>
+			<p> 投注号码：02 04 12 18 26 33|12</p> -->
+			<div class="running"><span>第1期</span>：开奖中....</div>
+		</div>
+	</div>
+	<div class="tle2">玩法说明</div>
+	<div class="tle3">开奖结果</div>
+	<div class="bottom">
+		<div class="mod1">
+			<div class="selection1 selection">
+				<div><img src="img/random.png"></div>
+				<div>1</div>
+				<div>随机一注</div>
+			</div>
+			<div class="selection2 selection">
+				<select id="random">
+					<option value="0">--随机--</option>
+					<option value="5">随机5注</option>
+					<option value="10">随机10注</option>
+					<option value="20">随机20注</option>
+					<option value="50">随机50注</option>
+					<option value="100">随机100注</option>
+					<option value="500">随机500注</option>
+					<option value="5000">随机5000注</option>
+				</select>
+			</div>
+			<div class="selection3 selection">
+				<select id="follow">
+					<option value="1">--追号--</option>
+					<option value="5">追5期</option>
+					<option value="10">追10期</option>
+					<option value="20">追20期</option>
+					<option value="50">追50期</option>
+					<option value="100">追100期</option>
+					<option value="500">追500期</option>
+				</select>
+			</div>
+			<!--
+			<div class="selection3">
+				<span>随机</span>
+				<div class="num"><input type="text" placeholder="0~500" /></div>
+				<span>注</span>
+			</div>
+			-->
+		</div>
+		<div class="mod2">
+			<div class="clear l">清空</div>
+			<div class="count l">
+				<div class="s1">共0注</div>
+				<div class="s2">0元</div>
+			</div>
+			<div class="commit r">投注</div>
+		</div>
+	</div>
+	<div class="bottom2">
+		<div class="goback on">返回</div>
+	</div>
+	<div class="bottom3">
+		<div class="goback">返回</div>
+	</div>
+	
+</div>
+</body>
+</html>
