@@ -167,6 +167,9 @@ $(document).ready(function() {
 		$("#random").val(0);
 		$("#follow").val(1);
 		$(".red-ball li,.blue-ball li").removeClass("active");
+		$(".result").html("<div class='running'><span>第1期</span>：开奖中....</div>");
+		now_issue = 0;
+		totalcount = {input:0,output:0,offtax:0};
 		count();
 	})	
 	
@@ -339,7 +342,7 @@ function process(record){
 				setTimeout(process,delay,record);
 				return;
 			}
-		}
+		} 
 	}
 	var thtml = "<p>本次投注结果</p>";
 	if(thiscount.awardcount["1"] > 0){
