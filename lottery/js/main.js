@@ -1,5 +1,3 @@
-
-
 var support = (window.Modernizr && Modernizr.touch === true) || (function () {
   return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
 })();
@@ -13,6 +11,7 @@ var eventName = {
 var winwidth = 0;
 var winheight = 0;
 var mygroup = new Array();
+//期数
 var now_issue = 0;
 var totalcount = {input:0,output:0,offtax:0};
 var awardconfig = {
@@ -36,7 +35,7 @@ var thiscount = {
 			"6":0,
 		},
 };
-
+var rule_swipe, result_swipe;
 
 var pageControl = (function () {
   	var words = [
@@ -50,48 +49,58 @@ var pageControl = (function () {
     designHeight = 960,  //设计高
     winscale = 1;         //页面缩放
 
-  return {
-    init: function(){
-      var winsize = getWinSize();
-      winwidth = winsize.width;
-      winheight = winsize.height;
-      if(IsPC()){
-        /*$(".main").css({
-          '-webkit-transform': "scale("+0.8+")",
-          'transform': "scale("+0.8+")"
-        });*/
-      }else{
-        $("body").width(winwidth).height(winheight);
-      }
-      if(winwidth/winheight > designWidth/designHeight){
-        winscale = winheight / designHeight;
-      }else{
-        winscale = winwidth / designWidth;
-      }
-      $(".main").width(winwidth).height(winheight);
+	return {
+	    init: function(){
+			var winsize = getWinSize();
+			winwidth = winsize.width;
+			winheight = winsize.height;
+			if(winwidth/winheight > designWidth/designHeight){
+				winscale = winheight / designHeight;
+			}else{
+				winscale = winwidth / designWidth;
+			}
+			if(IsPC()){
+				winWidth = designWidth;
+				winheight = designHeight;
+				$(".lottery").css({
+					'-webkit-transform': "scale("+winscale+")",
+					'transform': "scale("+winscale+")",
+					'transform-origin': "top center",
+					'-webkit-transform-origin': "top center",
+				});
+			}else{
+	        	$("body").width(winwidth).height(winheight);
+			}
+			
 
-      if($(".winscale").length > 0){
-        $(".winscale").css({
-          '-webkit-transform': "scale("+winscale+")",
-          'transform': "scale("+winscale+")"
-        });
-      }
-
-      
-    statSave: function(action,type){
-      if(typeof _hmt != "undefined"){
-          _hmt.push(['_trackEvent', action, type]);
-      }
-      if(typeof _czc != "undefined"){
-          _czc.push(["_trackEvent", action, type]);
-      }
-    }
-  }
+			if($(".winscale").length > 0){
+				$(".winscale").css({
+					'-webkit-transform': "scale("+winscale+")",
+					'transform': "scale("+winscale+")"
+				});
+			}
+		},
+	      
+	    statSave: function(action,type){
+			if(typeof _hmt != "undefined"){
+				_hmt.push(['_trackEvent', action, type]);
+			}
+			if(typeof _czc != "undefined"){
+				_czc.push(["_trackEvent", action, type]);
+			}
+	    }
+	}
 }());
 
 $(document).ready(function() {
+	/*document.addEventListener(eventName.move,function(e){
+		e.preventDefault();
+	})*/
 	pageinit();
 	
+	rule_swipe = new contentSwipe("rulecontent");
+	result_swipe = new contentSwipe("resultcontent");
+
 	//选择号码
 	$(".red-ball li,.blue-ball li").on(eventName.tap,function(){
 		if($(this).hasClass("active")){
@@ -134,23 +143,23 @@ $(document).ready(function() {
 	
 	//规则
 	$(".gorule").on(eventName.tap,function(){
-		$(".page2,.tle2,.bottom2").animate({"-webkit-transform":"translateX(0px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX(0px)"},200);
 	})
 	$(".page2").swipeRight(function(){
-		$(".page2,.tle2,.bottom2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
 	})
 	$(".bottom2 .goback").on(eventName.tap,function(){
-		$(".page2,.tle2,.bottom2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
 	})
-	//结果
+	/*//结果
 	$(".page3").swipeRight(function(){
 		if($(".bottom3 .goback").hasClass("on")){
 			$(".page3,.tle3,.bottom3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
 		}
-	})
+	})*/
 	$(".bottom3 .goback").on(eventName.tap,function(){
 		if($(".bottom3 .goback").hasClass("on")){
-			$(".page3,.tle3,.bottom3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+			$(".page3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
 		}
 	})
 	//清除选择
@@ -176,13 +185,12 @@ function pageinit(){
 	rem = rem.toFixed(1);
 	$("html").css("font-size",rem+"px");
 	$(".lottery").width(winwidth).height(winheight);
-	$(".page2 , .page3 ,.tle2,.tle3,.bottom2,.bottom3").css({"-webkit-transform":"translateX("+winwidth+"px)"});
+	$(".page2 , .page3 ").css({
+		"-webkit-transform":"translateX("+winwidth+"px)",
+				"transform":"translateX("+winwidth+"px)"
+	});
 
 	pageLoading("hide");
-	
-	
-	
-	
 }
 
 
@@ -201,7 +209,7 @@ function count(){
 		$(".red-ball li").each(function(){
 			if($(this).hasClass("active")){
 				red_num ++;
-				list["red"].push(parseInt($(this).attr("value")));
+				list["red"].push();
 			}
 		})
 		
@@ -219,6 +227,7 @@ function count(){
 			mygroup.push(list);
 		}
 	}else{
+		//随机2注以上
 		num = random;
 		$(".red-ball li,.blue-ball li").removeClass("active");
 	}
@@ -245,41 +254,36 @@ function lottery_run(){
 	var random = parseInt($("#random").val());
 	fnum = parseInt($("#follow").val());
 	
-	var record = false;
+	var record = {};
+	//自选号码，随机一注视为自选号码
 	if(random == 0){
 		if(mygroup.length > 0){
-			record = {
-					"now_num"	: 0,
-					"num"		: 1,
-					"now_fnum"	: 0,
-					"fnum"		: fnum,
-					"win_nums"	: {},
-			};
+			num = 1;
 		}else{
-			alert("请选择至少一组号码")
+			alert("请选择至少一组号码");
+			return;
 		}
-	}else{
+	}
+	//随机两注以上
+	else{
 		num = random;
 		mygroup = get_random(num);
-		
-		record = {
-				"now_num"	: 0,
-				"num"		: num,
-				"now_fnum"	: 0,
-				"fnum"		: fnum,
-				"win_nums"	: {},
-		};
 	}
-	
-	if(record){
-		$(".page3,.tle3,.bottom3").animate({"-webkit-transform":"translateX(0px)"},200);
-		$(".bottom3 .goback").removeClass("on");
-		thiscount = {input:0,output:0,offtax:0,awardcount:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,}};
-		var thisinput = parseInt($(".count .s2 span").text());
-		thiscount.input = thisinput;
-		totalcount.input += thisinput;
-		process(record);
-	}
+
+	record = {
+		"now_num"	: 0,
+		"num"		: num,
+		"now_fnum"	: 0,
+		"fnum"		: fnum,
+		"win_nums"	: {},
+	};
+	$(".page3").animate({"-webkit-transform":"translateX(0px)"},200);
+	$(".bottom3 .goback").removeClass("on");
+	thiscount = {input:0,output:0,offtax:0,awardcount:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,}};
+	var thisinput = parseInt($(".count .s2 span").text());
+	thiscount.input = thisinput;
+	totalcount.input += thisinput;
+	process(record);
 }
 
 
@@ -292,12 +296,12 @@ function lottery_run(){
  * 				fnum		: 追期数
  * 				win_nums	: 当前期开奖结果
  * }
- * 
+ * 用record来保存工作场景，setTimeout分步运行开奖过程，防止js单线程运行时间过久造成假死
  */
 function process(record){
 	if(typeof record != "object") return;
 	
-	var step = 100;
+	var step = 150;
 	var now_step = 0;
 	var delay = 20;
 	
@@ -366,8 +370,9 @@ function process(record){
 	thtml += "<p>总税后："+totalcount.offtax+"</p>";
 	thtml += "<p></p>";
 	$(".page3 .result .running").before(thtml);
-	$('.page3').scrollTop($('.page3 .result').height());
 	$(".page3 .running").html("开奖结束");
+	result_swipe.update();
+	result_swipe.scrollEnd();
 	$(".bottom3 .goback").addClass("on");
 }
 
@@ -388,7 +393,7 @@ function compare(win_nums,my_nums){
 			right_blue ++ ;
 		}
 	}
-	//console.log(ttt++);
+
 	//console.log(win_nums);
 	//console.log(my_nums);
 	//计算奖金
@@ -415,31 +420,30 @@ function compare(win_nums,my_nums){
 			var bnum = my_nums.blue.length;
 			for(var lever = awardlever ; lever <= 6; lever ++){
 				switch(lever){
-				case 1:
-					awardcount["1"] += 1;
-					break;
-				case 2:
-					awardcount["2"] += c(right_red,6) * c(rnum-right_red,0) * c(right_blue,0) * c(bnum-right_blue,1);
-					break;
-				case 3:
-					awardcount["3"] += c(right_red,5) * c(rnum-right_red,1) * c(right_blue,1) * c(bnum-right_blue,0);
-					break;
-				case 4:
-					awardcount["4"] += c(right_red,5) * c(rnum-right_red,1) * c(right_blue,0) * c(bnum-right_blue,1);
-					awardcount["4"] += c(right_red,4) * c(rnum-right_red,2) * c(right_blue,1) * c(bnum-right_blue,0);
-					break;
-				case 5:
-					awardcount["5"] += c(right_red,4) * c(rnum-right_red,2) * c(right_blue,0) * c(bnum-right_blue,1);
-					awardcount["5"] += c(right_red,3) * c(rnum-right_red,3) * c(right_blue,1) * c(bnum-right_blue,0);
-					break;
-				case 6:
-					awardcount["6"] += c(right_red,2) * c(rnum-right_red,4) * c(right_blue,1) * c(bnum-right_blue,0);
-					awardcount["6"] += c(right_red,1) * c(rnum-right_red,5) * c(right_blue,1) * c(bnum-right_blue,0);
-					awardcount["6"] += c(right_red,0) * c(rnum-right_red,6) * c(right_blue,1) * c(bnum-right_blue,0);
-					break;
+					case 1:
+						awardcount["1"] += 1;
+						break;
+					case 2:
+						awardcount["2"] += c(right_red,6) * c(rnum-right_red,0) * c(right_blue,0) * c(bnum-right_blue,1);
+						break;
+					case 3:
+						awardcount["3"] += c(right_red,5) * c(rnum-right_red,1) * c(right_blue,1) * c(bnum-right_blue,0);
+						break;
+					case 4:
+						awardcount["4"] += c(right_red,5) * c(rnum-right_red,1) * c(right_blue,0) * c(bnum-right_blue,1);
+						awardcount["4"] += c(right_red,4) * c(rnum-right_red,2) * c(right_blue,1) * c(bnum-right_blue,0);
+						break;
+					case 5:
+						awardcount["5"] += c(right_red,4) * c(rnum-right_red,2) * c(right_blue,0) * c(bnum-right_blue,1);
+						awardcount["5"] += c(right_red,3) * c(rnum-right_red,3) * c(right_blue,1) * c(bnum-right_blue,0);
+						break;
+					case 6:
+						awardcount["6"] += c(right_red,2) * c(rnum-right_red,4) * c(right_blue,1) * c(bnum-right_blue,0);
+						awardcount["6"] += c(right_red,1) * c(rnum-right_red,5) * c(right_blue,1) * c(bnum-right_blue,0);
+						awardcount["6"] += c(right_red,0) * c(rnum-right_red,6) * c(right_blue,1) * c(bnum-right_blue,0);
+						break;
 				}
 			}
-			
 		}else{
 			awardcount[awardlever] += 1;
 		}
@@ -459,13 +463,12 @@ function compare(win_nums,my_nums){
 		}
 	}
 	
-	
-	
 	write_log(awardcount,my_nums,win_nums);
 	
 }
 
 //write_log
+//中三等奖以上才会显示中奖详情
 function write_log(awardcount,my_nums,win_nums){
 	var thtml = "";
 	if(my_nums.red.length > 6 || my_nums.blue.length > 1){
@@ -511,7 +514,8 @@ function write_log(awardcount,my_nums,win_nums){
 	
 	$(".page3 .result .running").before(thtml);
 	if(thtml != ""){
-		$('.page3').scrollTop($('.page3 .result').height());
+		result_swipe.update();
+		result_swipe.scrollEnd();
 	}
 }
 
@@ -624,4 +628,137 @@ function IsPC()  {
        if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
    }  
    return flag;  
+}
+
+function contentSwipe(objid){
+	this.objId = objid;
+	this.obj = document.getElementById(this.objId);
+	this.now = 0;				//当前拖动值
+	this.start = 0;
+	this.end = 0;				//拖动最大值
+	this.buffer = 150;			//拖动缓冲
+	this.data = {};
+	this.timer = null;
+	var self = this;
+	this.obj.addEventListener(eventName.start,this);
+	this.obj.addEventListener(eventName.move,this);
+	this.obj.addEventListener(eventName.end,this);
+
+	this.end = $(this.obj).height()-$(this.obj).parent().height();
+	if(this.end < 0){
+		this.end = 0;
+	}
+	//console.log(this);
+}
+contentSwipe.prototype.update = function(e){
+	this.end = $(this.obj).height()-$(this.obj).parent().height();
+	if(this.end < 0){
+		this.end = 0;
+	}
+};
+contentSwipe.prototype.handleEvent = function(e){
+	switch(e.type){
+		case 'touchstart':
+		case 'mousedown':
+			this.startEvent(e);
+			break;
+		case 'touchmove':
+		case 'mousemove':
+			this.moveEvent(e);
+			break;
+		case 'touchend':
+		case 'mouseup':
+			this.endEvent(e);
+			break;
+    }
+};
+contentSwipe.prototype.startEvent = function(e){
+	var touches = support ? e.touches[0] : e;
+	this.data = {
+		startX: touches.pageX,
+		startY: touches.pageY,
+		lastX: touches.pageX,
+		lastY: touches.pageY
+	}
+	if(this.timer){
+		clearTimeout(this.timer);
+	}
+	$(this.obj).css({
+		'-webkit-transition': "all 0.3s ease-out",
+				'transition': "all 0.3s ease-out"
+	});
+}
+contentSwipe.prototype.moveEvent = function(e){
+	var touches = support ? e.touches[0] : e,
+		data = this.data;
+	var distX = touches.pageX - data.lastX;
+	var distY = touches.pageY - data.lastY;
+
+	data.lastX = touches.pageX;
+	data.lastY = touches.pageY;
+
+	//console.log(distY+":"+this.start);
+	//distY > 0 为swipeDown ,distY < 0 为swipeUp
+	//正常范围滚动
+	if( (distY > 0 && this.now > this.start) || (distY < 0 && this.now < this.end)) {
+		this.now = this.now - distY;
+	}else if(distY > 0 && this.now <= this.start){		//向下滑动小于初始值触发buffer
+		this.now = this.now - distY*(this.buffer - (this.start - this.now) )/this.buffer;
+	}else if (distY < 0 && this.now >= this.end){
+		this.now = this.now - distY*(this.buffer - (this.now - this.end) )/this.buffer;
+	}
+
+
+    $(this.obj).css({
+        '-webkit-transform': "translateY("+(-this.now)+"px)",
+        		'transform': "translateY("+(-this.now)+"px)"
+    });
+
+	e.preventDefault();
+}
+contentSwipe.prototype.endEvent = function(e){
+	if(this.now < this.start){
+		this.now = this.start;
+		$(this.obj).css({
+	        '-webkit-transform': "translateY("+(-this.start)+"px)",
+	        		'transform': "translateY("+(-this.start)+"px)"
+	    });
+	}else if(this.now > this.end){
+		this.now = this.end;
+		$(this.obj).css({
+	        '-webkit-transform': "translateY("+(-this.end)+"px)",
+	        		'transform': "translateY("+(-this.end)+"px)"
+	    });
+	}
+
+	this.timer = setTimeout((function(_this){
+		return function(){
+			$(_this.obj).css({
+				'-webkit-transition': "none",
+						'transition': "none"
+			});
+		}
+	}(this)) , 300);
+}
+contentSwipe.prototype.scrollEnd = function(){
+	if(this.timer){
+		clearTimeout(this.timer);
+	}
+	console.log("end:"+this.end);
+	$(this.obj).css({
+		'-webkit-transition': "all 0.3s ease-out",
+				'transition': "all 0.3s ease-out"
+	});
+	$(this.obj).css({
+        '-webkit-transform': "translateY("+(-this.end)+"px)",
+        		'transform': "translateY("+(-this.end)+"px)"
+    });
+    this.timer = setTimeout((function(_this){
+		return function(){
+			$(_this.obj).css({
+				'-webkit-transition': "none",
+						'transition': "none"
+			});
+		}
+	}(this)) , 300);
 }

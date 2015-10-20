@@ -50,7 +50,7 @@
 			<span class="l">至少选择6个红球，1一个篮球</span>
 			<div class="gorule r">玩法说明</div>
 		</div>
-		<div class="main">
+		<div class="main" style="display:none;">
 			<div class="red-ball ">
 				<ul>
 					<li value="1">01</li>
@@ -112,30 +112,43 @@
 		</div>
 	</div>
 	<div class="page2">
-		
-		<h1>试试看<br />你是能中500万的人吗</h1>
-		<div class="rule">
-			<h2>规则</h2>
-			<p>一等奖：中6+1，单注奖金5000000</p>
-			<p>二等奖：中6+0，单注奖金150000</p>
-			<p>三等奖：中5+1，单注奖金3000</p>
-			<p>四等奖：中5+0、4+1，单注奖金200</p>
-			<p>五等奖：中4+0、3+1，单注奖金10</p>
-			<p>六等奖：中2+1、1+1、0+1，单注奖金5</p>
-			<p>注：单注奖金达到10000以上需缴纳20%个人所得税</p>
+		<div class="tle2">玩法说明</div>
+		<div class="content" id="rulecontent">
+			<h1>试试看<br /></h1>
+			<div class="rule">
+				<h2>规则</h2>
+				<p>一等奖：中6+1，单注奖金5000000</p>
+				<p>二等奖：中6+0，单注奖金150000</p>
+				<p>三等奖：中5+1，单注奖金3000</p>
+				<p>四等奖：中5+0、4+1，单注奖金200</p>
+				<p>五等奖：中4+0、3+1，单注奖金10</p>
+				<p>六等奖：中2+1、1+1、0+1，单注奖金5</p>
+				<p>注：单注奖金达到10000以上需缴纳20%个人所得税</p>
+			</div>
+		</div>
+		<div class="bottom2">
+			<div class="goback on">返回</div>
 		</div>
 	</div>
 	<div class="page3">
-		<div class="result">
-			<h5>至少中三等奖以上才显示详情</h5>
-			<!-- <p>第20期：中一等奖</p>
-			<p>中奖号码：02 04 12 18 26 33|12</p>
-			<p> 投注号码：02 04 12 18 26 33|12</p> -->
-			<div class="running"><span>第1期</span>：开奖中....</div>
+		<div class="tle3">
+			<p></p>
+			<p>至少中三等奖以上才显示详情</p>
+		</div>
+		<div class="content" id="resultcontent">
+			<div class="result">
+				<!-- <p>第20期：中一等奖</p>
+				<p>中奖号码：02 04 12 18 26 33|12</p>
+				<p> 投注号码：02 04 12 18 26 33|12</p> -->
+				<div class="running"><span>第1期</span>：开奖中....</div>
+			</div>
+		</div>
+		<div class="bottom3">
+			<div class="goback">返回</div>
 		</div>
 	</div>
-	<div class="tle2">玩法说明</div>
-	<div class="tle3">开奖结果</div>
+	
+	
 	<div class="bottom">
 		<div class="mod1">
 			<div class="selection1 selection">
@@ -145,7 +158,7 @@
 			</div>
 			<div class="selection2 selection">
 				<select id="random">
-					<option value="0">--随机--</option>
+					<option value="0">随机多注</option>
 					<option value="5">随机5注</option>
 					<option value="10">随机10注</option>
 					<option value="20">随机20注</option>
@@ -157,13 +170,13 @@
 			</div>
 			<div class="selection3 selection">
 				<select id="follow">
-					<option value="1">--追号--</option>
-					<option value="5">追5期</option>
-					<option value="10">追10期</option>
-					<option value="20">追20期</option>
-					<option value="50">追50期</option>
-					<option value="100">追100期</option>
-					<option value="500">追500期</option>
+					<option value="1">追号1期</option>
+					<option value="5">追号5期</option>
+					<option value="10">追号10期</option>
+					<option value="20">追号20期</option>
+					<option value="50">追号50期</option>
+					<option value="100">追号100期</option>
+					<option value="500">追号500期</option>
 				</select>
 			</div>
 			<!--
@@ -183,12 +196,8 @@
 			<div class="commit r">投注</div>
 		</div>
 	</div>
-	<div class="bottom2">
-		<div class="goback on">返回</div>
-	</div>
-	<div class="bottom3">
-		<div class="goback">返回</div>
-	</div>
+	
+	
 	
 </div>
 </body>
