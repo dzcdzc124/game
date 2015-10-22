@@ -39,8 +39,7 @@ var rule_swipe, result_swipe;
 
 var pageControl = (function () {
   	var words = [
-	             "别走开，不定什么时候爆个五百万",
-	             "悄悄告诉你，你有好几次跟大奖擦肩而过",                  
+	                  
 			],
     statObj = null,       //统计组件
     winwidth = 640,       //页面宽
@@ -93,9 +92,9 @@ var pageControl = (function () {
 }());
 
 $(document).ready(function() {
-	/*document.addEventListener(eventName.move,function(e){
+	document.addEventListener(eventName.move,function(e){
 		e.preventDefault();
-	})*/
+	})
 	pageinit();
 	
 	rule_swipe = new contentSwipe("rulecontent");
