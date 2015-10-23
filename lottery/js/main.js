@@ -10,10 +10,11 @@ var eventName = {
 
 var winwidth = 0;
 var winheight = 0;
+//我的选号组
 var mygroup = new Array();
 //期数
 var now_issue = 0;
-var totalcount = {input:0,output:0,offtax:0};
+var totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
 var awardconfig = {
 		"1":5000000,
 		"2":150000,
@@ -26,6 +27,7 @@ var thiscount = {
 		input:0,
 		output:0,
 		offtax:0,
+		rate:0,
 		awardcount:{
 			"1":0,
 			"2":0,
@@ -166,9 +168,9 @@ $(document).ready(function() {
 		$("#random").val(0);
 		$("#follow").val(1);
 		$(".red-ball li,.blue-ball li").removeClass("active");
-		$(".result").html("<div class='running'><span>第1期</span>：开奖中....</div>");
+		$(".result .running").html("<span>第1期</span>：拼命开奖中....");
 		now_issue = 0;
-		totalcount = {input:0,output:0,offtax:0};
+		totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
 		count();
 	})	
 	
@@ -327,8 +329,8 @@ function process(record){
 	for(var i = record.now_fnum ;i < record.fnum ; i++ , record.now_fnum ++){
 		now_issue ++;
 		
-		$(".page3 .running").html("<span>第"+ now_issue +"期</span>：开奖中....");
-		
+		$(".page3 .running").html("<span>第"+ now_issue +"期</span>：拼命开奖中....");
+		//获得一组开奖号码
 		var win_nums = get_random(1);
 		win_nums = win_nums[0];
 		record.win_nums = win_nums;
@@ -363,16 +365,20 @@ function process(record){
 		thtml += "<p>六等奖："+thiscount.awardcount["6"]+"注</p>";
 	}
 	
-	thtml += "<p>投入："+thiscount.input+"</p>";
-	thtml += "<p>彩金："+thiscount.output+"</p>";
-	thtml += "<p>税后："+thiscount.offtax+"</p>";
+	thtml += "<p>本次投入："+thiscount.input+"</p>";
+	thtml += "<p>本次彩金："+thiscount.output+"</p>";
+	thtml += "<p>本次收入："+thiscount.offtax+"</p>";
 	thtml += "<p>总计</p>";
-	thtml += "<p>总投入："+totalcount.input+"</p>";
-	thtml += "<p>总彩金："+totalcount.output+"</p>";
-	thtml += "<p>总税后："+totalcount.offtax+"</p>";
+	thtml += "<p>累计投入："+totalcount.input+"</p>";
+	thtml += "<p>累计彩金："+totalcount.output+"</p>";
+	thtml += "<p>累计收入："+totalcount.offtax+"</p>";
 	thtml += "<p></p>";
 	$(".page3 .result .running").before(thtml);
-	$(".page3 .running").html("开奖结束");
+	if(thiscount.input > 200000){
+		$(".page3 .running").html("如果真拿彩票兑，眼睛都废了吧");
+	}else{
+		$(".page3 .running").html("开奖结束");
+	}
 	result_swipe.update();
 	result_swipe.scrollEnd();
 	$(".bottom3 .goback").addClass("on");
@@ -463,6 +469,8 @@ function compare(win_nums,my_nums){
 			totalcount.output += output;
 			totalcount.offtax += offtax;
 		}
+		thiscount.rate = thiscount.offtax / thiscount.input;
+		totalcount.rate = totalcount.offtax / totalcount.input;
 	}
 	
 	write_log(awardcount,my_nums,win_nums);
