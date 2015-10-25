@@ -288,11 +288,11 @@ function count(){
 	var fnum = 0;	//追号期数
 	var total = 0;	//总注数
 	var random = $("#random").val();
+	var red_num = 0;
+	var blue_num = 0;
 	mygroup = new Array();		//重置我的组合
 	if(random == 0){
 		$("#random").val(0);
-		var red_num = 0;
-		var blue_num = 0;
 		var list = {"red":[],"blue":[]};
 		$(".red-ball li").each(function(){
 			if($(this).hasClass("active")){
@@ -323,7 +323,11 @@ function count(){
 	if(num > 0){
 		fnum = $("#follow").val();
 		total = num * fnum;
-		$(".count .s1").html("共"+total+"注");
+		if(red_num > 6 || blue_num > 1){
+			$(".count .s1").html("复式:共"+total+"注");
+		}else{
+			$(".count .s1").html("单式:共"+total+"注");
+		}
 		$(".count .s2").html("<span>"+(total*2)+"</span>元");
 		$(".commit").addClass("on");
 	}else{
