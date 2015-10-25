@@ -8,6 +8,14 @@ var eventName = {
   tap: support ? 'tap' : 'click'
 };
 
+var img_list = [
+                "img/intro.png",
+                "img/rule.png",
+                "img/result.png",
+                "img/random.png"
+                ];
+
+
 var winwidth = 0;
 var winheight = 0;
 //我的选号组
@@ -38,6 +46,73 @@ var thiscount = {
 		},
 };
 var rule_swipe, result_swipe;
+
+var preLoad = {
+  startTime : 0,        //开始时间
+  endTime : 0,          //结束时间
+  process : 0,
+  load_timer : null,
+  pagination_timer : null,
+  complete_load : false,
+  has_load_num : 0,
+  init:function(){
+    //页面图片的加载
+    preLoad.startTime = new Date().getTime();
+
+    for(var i = 0 ;i < img_list.length; i++){
+      var img = new Image();
+      img.onload = function () {
+        preLoad.has_load_num ++;
+        if( preLoad.has_load_num >= img_list.length){
+          preLoad.complete_load = true;
+        }
+      }
+      img.onerror = function () { 
+        preLoad.has_load_num ++;
+        if( preLoad.has_load_num >= img_list.length){
+          preLoad.complete_load = true;
+        }
+      }
+      img.src = img_list[i];
+    }
+
+    clearInterval(preLoad.load_timer);
+    clearInterval(preLoad.pagination_timer);
+    preLoad.load_timer = setInterval(preLoad.loading_count,40);
+    preLoad.pagination_timer = setInterval(preLoad.loading_pagination,400);
+  },
+  loading_count:function(){
+    var np = Math.round( (preLoad.has_load_num / (img_list.length))*100 );
+    if(np >= 100){
+      preLoad.process += 20;
+    }else if(preLoad.process < np){
+      preLoad.process += 2;
+    }
+    if(preLoad.process > 100){preLoad.process = 100;}
+    $(".loader .process").html(preLoad.process+ "%");
+    if(preLoad.process >= 100){
+      clearInterval(preLoad.load_timer);
+      clearInterval(preLoad.pagination_timer);
+      preLoad.loadComplete();
+    }
+  },
+  loading_pagination: function(){
+    var num = $(".loader .p1 .pagination").size();
+    var onnum = $(".loader .p1 .on").size();
+    if(onnum < num ){
+      $(".loader .p1 .pagination").eq(onnum).addClass("on");
+    }else{
+      $(".loader .p1 .pagination").removeClass("on");
+    }
+  },
+  loadComplete:function(){
+    pageLoading("hide");
+    $(".loader .loading").removeClass("animated");
+    preLoad.endTime = new Date().getTime();
+    var diffTime = preLoad.endTime - preLoad.startTime;
+    console.log("load time:"+diffTime);
+  }
+}
 
 var pageControl = (function () {
   	var words = [
@@ -98,9 +173,18 @@ $(document).ready(function() {
 		e.preventDefault();
 	})
 	pageinit();
+	preLoad.init();
 	
 	rule_swipe = new contentSwipe("rulecontent");
 	result_swipe = new contentSwipe("resultcontent");
+
+	//介绍
+	$(".intro_level").on(eventName.tap, function(){
+		$(this).animate({"opacity":"0"},300);
+		setTimeout(function(){
+			$(".intro_level").hide();
+		},300)
+	})
 
 	//选择号码
 	$(".red-ball li,.blue-ball li").on(eventName.tap,function(){
@@ -144,13 +228,13 @@ $(document).ready(function() {
 	
 	//规则
 	$(".gorule").on(eventName.tap,function(){
-		$(".page2").animate({"-webkit-transform":"translateX(0px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
 	})
 	$(".page2").swipeRight(function(){
-		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
 	})
 	$(".bottom2 .goback").on(eventName.tap,function(){
-		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
 	})
 	/*//结果
 	$(".page3").swipeRight(function(){
@@ -160,7 +244,7 @@ $(document).ready(function() {
 	})*/
 	$(".bottom3 .goback").on(eventName.tap,function(){
 		if($(".bottom3 .goback").hasClass("on")){
-			$(".page3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+			$(".page3").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
 		}
 	})
 	//清除选择
@@ -281,7 +365,7 @@ function lottery_run(){
 		"fnum"		: fnum,
 		"win_nums"	: {},
 	};
-	$(".page3").animate({"-webkit-transform":"translateX(0px)"},200);
+	$(".page3").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
 	$(".bottom3 .goback").removeClass("on");
 	thiscount = {input:0,output:0,offtax:0,awardcount:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,}};
 	var thisinput = parseInt($(".count .s2 span").text());
