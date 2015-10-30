@@ -570,6 +570,7 @@ function compare(win_nums,my_nums){
 function write_log(awardcount,my_nums,win_nums){
 	var thtml = "";
 	if(my_nums.red.length > 6 || my_nums.blue.length > 1){
+		//复式中三等奖以上4
 		if(awardcount["1"] > 0 || awardcount["2"] > 0 || awardcount["3"] > 0){
 			thtml = "<p>第"+now_issue+"期：中</p>";
 			if(awardcount["1"] > 0){
@@ -605,6 +606,15 @@ function write_log(awardcount,my_nums,win_nums){
 		
 		if(award != ""){
 			thtml += "<p>第"+now_issue+"期：中"+award+"</p>";
+			var win_obj = {
+				red:  win_nums.red.concat(),
+				blue: win_nums.blue.concat()
+			}
+			var my_obj = {
+				red:  my_nums.red.concat(),
+				blue: my_nums.blue.concat(),
+			}
+
 			thtml += "<p>开奖号码："+ win_nums.red.join(" ") + "|" + win_nums.blue.join(" ") +"</p>";
 			thtml += "<p>投注号码："+ my_nums.red.join(" ") + "|" + my_nums.blue.join(" ") + "(单式)</p>";
 		}
