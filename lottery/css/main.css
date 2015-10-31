@@ -195,24 +195,8 @@ body {font-family:Arial, '微软雅黑'; background-color:#f9f6f0; }
 
 }
 .page2 .content{ }
-.page2 h1{ text-align:center; font-size:40px; line-height:50px; 
-	animation: color-change 16s linear 0 forwards infinite; 
-	-webkit-animation: color-change 16s linear 0 forwards infinite; padding-top:80px;
-}
-@keyframes color-change {
-	0%{color:red;}
-	25%{color:green;}
-	50%{color:blue;}
-	75%{color:yellow;}
-	100%{color:red;}
-}
-@-webkit-keyframes color-change {
-	0%{color:red;}
-	25%{color:green;}
-	50%{color:blue;}
-	75%{color:yellow;}
-	100%{color:red;}
-}
+.page2 h1{ text-align:center; font-size:40px; line-height:50px; }
+
 .rule {width:560px; margin:0 auto; padding-bottom:120px; }
 .rule h2{width:100%; border-bottom:2px solid #dddddd; font-size:36px; line-height:60px; color:#4c4c4c;}
 .rule p{font-size:20px; color:#666;}
@@ -239,9 +223,20 @@ body {font-family:Arial, '微软雅黑'; background-color:#f9f6f0; }
 .result h5{width:100%; border-bottom: 2px solid #dddddd; font-size:28px; line-height:60px; 	color:#4c4c4c; margin:20px 0; text-align:center;}
 .result p{font-size:28px; color:#666; margin:0; line-height:60px; min-height:60px;}
 .result p:nth-child(2n) {background-color:#eee;}
+.result p i {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 5px 1px;
+    display: inline-block;
+    text-align: center;
+    background-color: #ccc;
+    line-height: 50px;
+}
+.result p .rbingo { background-color: #dc092c; color: #fff;}
+.result p .bbingo { background-color: #007eff; color: #fff;}
+
 .running {text-align:center; font-size:28px;}
-
-
 .bottom3{width:100%; height:100px; position:absolute; background-color:#f9f6ef; bottom:0; left: 0;
 		box-shadow: 0 0 12px #333; z-index:110;}
 

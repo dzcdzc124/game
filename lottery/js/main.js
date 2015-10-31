@@ -297,7 +297,7 @@ function count(){
 		$(".red-ball li").each(function(){
 			if($(this).hasClass("active")){
 				red_num ++;
-				list["red"].push();
+				list["red"].push(parseInt($(this).attr("value")));
 			}
 		})
 		
@@ -490,8 +490,6 @@ function compare(win_nums,my_nums){
 		}
 	}
 
-	//console.log(win_nums);
-	//console.log(my_nums);
 	//计算奖金
 	var awardlever = 0;			//奖级
 	var awardcount = {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,};	//各奖级注数统计
@@ -562,7 +560,6 @@ function compare(win_nums,my_nums){
 	}
 	
 	write_log(awardcount,my_nums,win_nums);
-	
 }
 
 //write_log
@@ -591,11 +588,37 @@ function write_log(awardcount,my_nums,win_nums){
 			if(awardcount["6"] > 0){
 				thtml += "<p>六等奖："+awardcount["6"]+"注</p>";
 			}
-			thtml += "<p>开奖号码："+ win_nums.red.join(" ") + "|" + win_nums.blue.join(" ") +"</p>";
-			thtml += "<p>投注号码："+ my_nums.red.join(" ") + "|" + my_nums.blue.join(" ") + "(复式)</p>";
+
+			var win_obj = {};
+			var my_obj = {};
+
+			my_obj.red = my_nums.red.map(function(item,index,array){
+				if(in_array(item,win_nums.red)){
+					return "<i class='rbingo'>"+item+"</i>";
+				}else{
+					return  "<i>"+item+"</i>";
+				}
+			})
+			my_obj.blue = my_nums.blue.map(function(item,index, array){
+				if(in_array(item,win_nums.blue)){
+					return "<i class='bbingo'>"+item+"</i>";
+				}else{
+					return  "<i>"+item+"</i>";
+				}
+			})
+			win_obj.red = win_nums.red.map(function(item,index, array){
+				return "<i class='rbingo'>"+item+"</i>";
+			})
+			win_obj.blue = win_nums.blue.map(function(item,index, array){
+				return "<i class='bbingo'>"+item+"</i>";
+			})
+
+			thtml += "<p>开奖号码："+ win_obj.red.join("") + "|" + win_obj.blue.join("") +"</p>";
+			thtml += "<p>投注号码："+ my_obj.red.join("") + "|" + my_obj.blue.join("") + "(复式)</p>";
 		}
 	}else{
 		var award = "";
+
 		if(awardcount["1"] > 0){
 			award = "一等奖";
 		}else if(awardcount["2"] > 0){
@@ -605,18 +628,34 @@ function write_log(awardcount,my_nums,win_nums){
 		}
 		
 		if(award != ""){
-			thtml += "<p>第"+now_issue+"期：中"+award+"</p>";
-			var win_obj = {
-				red:  win_nums.red.concat(),
-				blue: win_nums.blue.concat()
-			}
-			var my_obj = {
-				red:  my_nums.red.concat(),
-				blue: my_nums.blue.concat(),
-			}
 
-			thtml += "<p>开奖号码："+ win_nums.red.join(" ") + "|" + win_nums.blue.join(" ") +"</p>";
-			thtml += "<p>投注号码："+ my_nums.red.join(" ") + "|" + my_nums.blue.join(" ") + "(单式)</p>";
+			thtml += "<p>第"+now_issue+"期：中"+award+"</p>";
+			var win_obj = {};
+			var my_obj = {};
+
+			my_obj.red = my_nums.red.map(function(item,index,array){
+				if(in_array(item,win_nums.red)){
+					return "<i class='rbingo'>"+item+"</i>";
+				}else{
+					return  "<i>"+item+"</i>";
+				}
+			})
+			my_obj.blue = my_nums.blue.map(function(item,index, array){
+				if(in_array(item,win_nums.blue)){
+					return "<i class='bbingo'>"+item+"</i>";
+				}else{
+					return  "<i>"+item+"</i>";
+				}
+			})
+			win_obj.red = win_nums.red.map(function(item,index, array){
+				return "<i class='rbingo'>"+item+"</i>";
+			})
+			win_obj.blue = win_nums.blue.map(function(item,index, array){
+				return "<i class='bbingo'>"+item+"</i>";
+			})
+
+			thtml += "<p>开奖号码："+ win_obj.red.join("") + "|" + win_obj.blue.join("") +"</p>";
+			thtml += "<p>投注号码："+ my_obj.red.join("") + "|" + my_obj.blue.join("") + "(单式)</p>";
 		}
 	}
 	
@@ -626,7 +665,6 @@ function write_log(awardcount,my_nums,win_nums){
 		result_swipe.scrollEnd();
 	}
 }
-
 
 /* 随机生成号码
  * num 生成号码组数
@@ -651,7 +689,6 @@ function get_random(num){
 	//console.log(result);
 	return result;
 }
-
 
 function in_array(search,array){
     for(var i in array){
@@ -703,7 +740,6 @@ function pageLoading(sw){
 		$(".fullmask,.pageloading").hide();
 	}
 }
-
 
 function getWinSize(){
   var winWidth = 0 , winHeight = 0;
@@ -852,7 +888,7 @@ contentSwipe.prototype.scrollEnd = function(){
 	if(this.timer){
 		clearTimeout(this.timer);
 	}
-	console.log("end:"+this.end);
+	this.now = this.end;
 	$(this.obj).css({
 		'-webkit-transition': "all 0.3s ease-out",
 				'transition': "all 0.3s ease-out"
