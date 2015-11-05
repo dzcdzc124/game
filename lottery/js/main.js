@@ -16,8 +16,6 @@ var img_list = [
                 ];
 
 
-var winwidth = 0;
-var winheight = 0;
 //我的选号组
 var mygroup = new Array();
 //期数
@@ -45,7 +43,7 @@ var thiscount = {
 			"6":0,
 		},
 };
-var rule_swipe, result_swipe;
+
 
 var preLoad = {
   startTime : 0,        //开始时间
@@ -106,7 +104,7 @@ var preLoad = {
     }
   },
   loadComplete:function(){
-    pageLoading("hide");
+    pageControl.pageLoading("hide");
     $(".loader .loading").removeClass("animated");
     preLoad.endTime = new Date().getTime();
     var diffTime = preLoad.endTime - preLoad.startTime;
@@ -118,6 +116,7 @@ var pageControl = (function () {
   	var words = [
 	                  
 			],
+	rule_swipe = result_swipe = lottery_swipe = null,
     statObj = null,       //统计组件
     winwidth = 640,       //页面宽
     winheight = 960,     //页面高
@@ -130,33 +129,198 @@ var pageControl = (function () {
 			var winsize = getWinSize();
 			winwidth = winsize.width;
 			winheight = winsize.height;
+
 			if(winwidth/winheight > designWidth/designHeight){
 				winscale = winheight / designHeight;
 			}else{
 				winscale = winwidth / designWidth;
 			}
+
 			if(IsPC()){
-				winWidth = designWidth;
-				winheight = designHeight;
-				$(".lottery").css({
-					'-webkit-transform': "scale("+winscale+")",
-					'transform': "scale("+winscale+")",
-					'transform-origin': "top center",
-					'-webkit-transform-origin': "top center",
+				$(".lottery,.pageloading").width(designWidth).height(designHeight).css({
+				  '-webkit-transform-origin':'top center',
+				          'transform-origin':'top center',
+				  '-webkit-transform': "scale("+winscale+")",
+				          'transform': "scale("+winscale+")"
+				});
+				$(".pageloading").css({
+				  'position': 'relative',
+				  'margin': '0 auto'
+				})
+			}else{
+				$("body").width(winwidth).height(winheight);
+				$(".lottery").width(winwidth).height(winheight);
+				if($(".winscale").length > 0){
+				  $(".winscale").css({
+				    '-webkit-transform': "scale("+winscale+")",
+				            'transform': "scale("+winscale+")"
+				  });
+				}
+			}
+			$(".page2 , .page3 ").css({
+				"-webkit-transform":"translateX("+winwidth+"px)",
+						"transform":"translateX("+winwidth+"px)"
+			});
+			preLoad.init();
+			pageControl.addEvent();
+		},
+	    addEvent: function(){
+	    	lottery_swipe = new contentSwipe("lotteryContent");
+	    	rule_swipe = new contentSwipe("rulecontent");
+			result_swipe = new contentSwipe("resultcontent");
+
+			var isOld = CookieObj.get("isOld");
+			if(isOld){
+				$(".intro_level").hide();
+				$(".lottery").on("doubleTap", function(e){
+					e.preventDefault();
+					//双击清除cookie，下次进入显示介绍
+					console.log("doubleTap");
+					CookieObj.del("isOld");
 				});
 			}else{
-	        	$("body").width(winwidth).height(winheight);
+				//介绍
+				$(".intro_level").on(eventName.tap, function(){
+					$(this).animate({"opacity":"0"},300);
+					setTimeout(function(){
+						$(".intro_level").hide();
+					},300)
+				})
+				//2天的cookie，不再显示介绍
+				CookieObj.set("isOld","true",2*24*60*60*1000);
 			}
-			
 
-			if($(".winscale").length > 0){
-				$(".winscale").css({
-					'-webkit-transform': "scale("+winscale+")",
-					'transform': "scale("+winscale+")"
-				});
-			}
-		},
-	      
+
+			//选择号码
+			$(".red-ball li,.blue-ball li").on(eventName.tap,function(){
+				if($(this).hasClass("active")){
+					$(this).removeClass("active");
+				}else{
+					$(this).addClass("active");
+				}
+				$("#random").val(0);
+				count();
+			}).on("touchstart",function(){
+				$(this).addClass("on");
+			}).on("touchend",function(){
+				$(this).removeClass("on");
+			})
+			
+			$("#follow,#random").on("change",function(){
+				count();
+			})
+			
+			
+			//随机一注
+			$(".selection1").on(eventName.tap,function(){
+				mygroup = get_random(1);
+				$("#random").val(0);
+				$(".red-ball li,.blue-ball li").removeClass("active");
+				if( mygroup.length > 0){
+					for(var i in mygroup[0].red){
+						$(".red-ball li").eq( mygroup[0].red[i] - 1 ).addClass("active");
+					}
+					for(var i in mygroup[0].blue){
+						$(".blue-ball li").eq( mygroup[0].blue[i] - 1 ).addClass("active");
+					}
+				}
+				count();
+			}).on("touchstart",function(){
+				$(this).addClass("on");
+			}).on("touchend",function(){
+				$(this).removeClass("on");
+			})
+			
+			//规则
+			$(".gorule").on(eventName.tap,function(){
+				$(".page2").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
+			})
+			$(".page2").swipeRight(function(){
+				$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
+			})
+			$(".bottom2 .goback").on(eventName.tap,function(){
+				$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
+			})
+			/*//结果
+			$(".page3").swipeRight(function(){
+				if($(".bottom3 .goback").hasClass("on")){
+					$(".page3,.tle3,.bottom3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
+				}
+			})*/
+			$(".bottom3 .goback").on(eventName.tap,function(){
+				if($(".bottom3 .goback").hasClass("on")){
+					$(".page3").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
+				}
+			})
+			//清除选择
+			$(".clear").on(eventName.tap,function(){
+				$("#random").val(0);
+				$("#follow").val(1);
+				$(".red-ball li,.blue-ball li").removeClass("active");
+				$(".result .running").html("<span>第1期</span>：拼命开奖中....");
+				now_issue = 0;
+				totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
+				count();
+			})	
+			
+			$(".bottom .commit").on(eventName.tap,function(){
+				if($(this).hasClass("on")){
+					lottery_run();
+				}
+			});
+	    },
+	    addShakeEvent: function(){
+	      if (window.DeviceMotionEvent) {  
+	        window.addEventListener('devicemotion', this.deviceMotionHandler, false );  
+	      } else {  
+	        console.log("不支持摇动事件")
+	        //点击随机
+	        $(".page4 .logo").off().on(eventName.tap,(function(_this){
+	          return function(){
+	            var param = gameControl.getRandomResult();
+	            _this.createImage(param,_this.setMyResult);
+	          }
+	        }(this)));
+	      } 
+	    },
+	    removeShakeEvent: function(){
+	      if (window.DeviceMotionEvent) {  
+	        window.removeEventListener('devicemotion', this.deviceMotionHandler, false);  
+	      }
+	    },
+	    deviceMotionHandler: function(eventData){
+	      var acceleration = eventData.accelerationIncludingGravity;
+	      var curTime = new Date().getTime();
+	      var speed = 0;
+
+	      if ((curTime - deviceData.lastUpdate) > 100) {
+	          var diffTime = curTime - deviceData.lastUpdate;
+	          deviceData.lastUpdate = curTime;
+
+	          deviceData.x = acceleration.x;
+	          deviceData.y = acceleration.y;
+	          deviceData.z = acceleration.z;
+
+	          speed = Math.abs(deviceData.x +deviceData.y + deviceData.z - deviceData.lx - deviceData.ly - deviceData.lz) / diffTime * 10000;
+	          deviceData.maxSpeed = speed > deviceData.maxSpeed ? speed :deviceData.maxSpeed;
+	          var currentSpeed = 0;
+	          if ( speed >= SHAKE_THRESHOLD ) {
+	            deviceData.isTrigger = true;
+	            $(".shakeloading").removeClass("none");
+	          }else if( speed <= STOP_THRESHOLD && deviceData.isTrigger){
+	            deviceData.isTrigger = false;
+	            deviceData.maxSpeed = 0;
+	            deviceData.lastUpdate += 1500;
+	            $(".shakeloading").addClass("none");
+	            var param = gameControl.getRandomResult();
+	            pageControl.createImage(param,pageControl.setMyResult);
+	            //$(".page4 .logo").html("speed:"+speed.toFixed(2)+",max:"+deviceData.maxSpeed.toFixed(2));
+	          }
+	          deviceData.lx = deviceData.x;
+	          deviceData.ly = deviceData.y;
+	          deviceData.lz = deviceData.z;
+	      }
+	    },
 	    statSave: function(action,type){
 			if(typeof _hmt != "undefined"){
 				_hmt.push(['_trackEvent', action, type]);
@@ -164,7 +328,16 @@ var pageControl = (function () {
 			if(typeof _czc != "undefined"){
 				_czc.push(["_trackEvent", action, type]);
 			}
-	    }
+	    },
+	    //---页面等待---//
+		pageLoading: function(sw){
+			if (sw == "show"){
+				$(".fullmask,.pageloading").show();
+			}
+			if (sw == "hide"){
+				$(".fullmask,.pageloading").hide();
+			}
+		}
 	}
 }());
 
@@ -172,97 +345,8 @@ $(document).ready(function() {
 	document.addEventListener(eventName.move,function(e){
 		e.preventDefault();
 	})
-	pageinit();
-	preLoad.init();
-	
-	rule_swipe = new contentSwipe("rulecontent");
-	result_swipe = new contentSwipe("resultcontent");
-
-	//介绍
-	$(".intro_level").on(eventName.tap, function(){
-		$(this).animate({"opacity":"0"},300);
-		setTimeout(function(){
-			$(".intro_level").hide();
-		},300)
-	})
-
-	//选择号码
-	$(".red-ball li,.blue-ball li").on(eventName.tap,function(){
-		if($(this).hasClass("active")){
-			$(this).removeClass("active");
-		}else{
-			$(this).addClass("active");
-		}
-		$("#random").val(0);
-		count();
-	}).on("touchstart",function(){
-		$(this).addClass("on");
-	}).on("touchend",function(){
-		$(this).removeClass("on");
-	})
-	
-	$("#follow,#random").on("change",function(){
-		count();
-	})
-	
-	
-	//随机一注
-	$(".selection1").on(eventName.tap,function(){
-		mygroup = get_random(1);
-		$("#random").val(0);
-		$(".red-ball li,.blue-ball li").removeClass("active");
-		if( mygroup.length > 0){
-			for(var i in mygroup[0].red){
-				$(".red-ball li").eq( mygroup[0].red[i] - 1 ).addClass("active");
-			}
-			for(var i in mygroup[0].blue){
-				$(".blue-ball li").eq( mygroup[0].blue[i] - 1 ).addClass("active");
-			}
-		}
-		count();
-	}).on("touchstart",function(){
-		$(this).addClass("on");
-	}).on("touchend",function(){
-		$(this).removeClass("on");
-	})
-	
-	//规则
-	$(".gorule").on(eventName.tap,function(){
-		$(".page2").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
-	})
-	$(".page2").swipeRight(function(){
-		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
-	})
-	$(".bottom2 .goback").on(eventName.tap,function(){
-		$(".page2").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
-	})
-	/*//结果
-	$(".page3").swipeRight(function(){
-		if($(".bottom3 .goback").hasClass("on")){
-			$(".page3,.tle3,.bottom3").animate({"-webkit-transform":"translateX("+winwidth+"px)"},200);
-		}
-	})*/
-	$(".bottom3 .goback").on(eventName.tap,function(){
-		if($(".bottom3 .goback").hasClass("on")){
-			$(".page3").animate({"-webkit-transform":"translateX("+winwidth+"px)","transform":"translateX("+winwidth+"px)"},200);
-		}
-	})
-	//清除选择
-	$(".clear").on(eventName.tap,function(){
-		$("#random").val(0);
-		$("#follow").val(1);
-		$(".red-ball li,.blue-ball li").removeClass("active");
-		$(".result .running").html("<span>第1期</span>：拼命开奖中....");
-		now_issue = 0;
-		totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
-		count();
-	})	
-	
-	$(".bottom .commit").on(eventName.tap,function(){
-		if($(this).hasClass("on")){
-			lottery_run();
-		}
-	});
+	pageControl.init();
+	return;
 })
 
 function pageinit(){
@@ -278,7 +362,7 @@ function pageinit(){
 				"transform":"translateX("+winwidth+"px)"
 	});
 
-	pageLoading("hide");
+	pageControl.pageLoading("hide");
 }
 
 
@@ -731,16 +815,6 @@ function isEmptyObject(o){
     return true;
 }
 
-//---页面等待---//
-function pageLoading(sw){
-	if (sw == "show"){
-		$(".fullmask,.pageloading").show();
-	}
-	if (sw == "hide"){
-		$(".fullmask,.pageloading").hide();
-	}
-}
-
 function getWinSize(){
   var winWidth = 0 , winHeight = 0;
   // 获取窗口宽度
@@ -771,7 +845,33 @@ function IsPC()  {
    for (var v = 0; v < Agents.length; v++) {  
        if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
    }  
-   return flag;  
+   return flag;
+}
+
+var CookieObj = {
+	set: function( name, value , time){
+		if(typeof time == "undefined"){
+			time = 7*24*60*60*1000;
+		}
+	    var exp = new Date(); 
+	    exp.setTime(exp.getTime() + time); 
+	    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
+	},
+	get: function(name){
+		var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+	    if(arr=document.cookie.match(reg))
+	        return unescape(arr[2]); 
+	    else 
+	        return null; 
+	},
+	del: function(name){
+		var exp = new Date(); 
+	    exp.setTime(exp.getTime() - 1); 
+	    var cval = this.get(name); 
+	    if(cval!=null){
+	        document.cookie= name + "="+cval+";expires="+exp.toGMTString(); 
+	    }
+	}
 }
 
 function contentSwipe(objid){
@@ -827,9 +927,9 @@ contentSwipe.prototype.startEvent = function(e){
 	if(this.timer){
 		clearTimeout(this.timer);
 	}
-	$(this.obj).css({
-		'-webkit-transition': "all 0.3s ease-out",
-				'transition': "all 0.3s ease-out"
+	$(_this.obj).css({
+		'-webkit-transition': "none",
+				'transition': "none"
 	});
 }
 contentSwipe.prototype.moveEvent = function(e){
@@ -861,6 +961,10 @@ contentSwipe.prototype.moveEvent = function(e){
 	e.preventDefault();
 }
 contentSwipe.prototype.endEvent = function(e){
+	$(this.obj).css({
+		'-webkit-transition': "all 0.3s ease-out",
+				'transition': "all 0.3s ease-out"
+	});
 	if(this.now < this.start){
 		this.now = this.start;
 		$(this.obj).css({
@@ -906,3 +1010,5 @@ contentSwipe.prototype.scrollEnd = function(){
 		}
 	}(this)) , 300);
 }
+
+

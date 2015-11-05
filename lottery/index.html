@@ -46,12 +46,12 @@
 <div class="intro_level"></div>
 
 <div class="lottery">
-	<div class="page1 ">
+	<div class="page1" id="lotteryContent">
 		<div class="intro">
 			<span class="l">至少选择6个红球，1一个篮球</span>
 			<div class="gorule r">奖金说明</div>
 		</div>
-		<div class="main" >
+		<div class="main" style="display:none;">
 			<div class="red-ball ">
 				<ul>
 					<li value="1">01</li>
@@ -153,9 +153,9 @@
 	<div class="bottom">
 		<div class="mod1">
 			<div class="selection1 selection">
-				<div><img src="img/random.png"></div>
+				<div></div>
 				<div>1</div>
-				<div>随机一注</div>
+				<div>随机</div>
 			</div>
 			<div class="selection2 selection">
 				<select id="random">
@@ -166,7 +166,7 @@
 					<option value="50">随机50注</option>
 					<option value="100">随机100注</option>
 					<option value="500">随机500注</option>
-					<option value="5000">随机5000注</option>
+					<option value="1000">随机1000注</option>
 				</select>
 			</div>
 			<div class="selection3 selection">
@@ -177,7 +177,7 @@
 					<option value="20">追号20期</option>
 					<option value="50">追号50期</option>
 					<option value="100">追号100期</option>
-					<option value="500">追号500期</option>
+					<option value="200">追号200期</option>
 				</select>
 			</div>
 			<!--
