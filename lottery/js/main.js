@@ -196,7 +196,6 @@ var pageControl = (function () {
 				CookieObj.set("isOld","true",2*24*60*60*1000);
 			}
 
-
 			//选择号码
 			$(".red-ball li,.blue-ball li").on(eventName.tap,function(){
 				if($(this).hasClass("active")){
@@ -278,22 +277,21 @@ var pageControl = (function () {
 	    },
 	    addShakeEvent: function(){
 	      if (window.DeviceMotionEvent) {  
-	        window.addEventListener('devicemotion', this.deviceMotionHandler, false );  
+	        window.addEventListener('devicemotion', pageControl.deviceMotionHandler, false );  
 	      } else {  
 	        console.log("不支持摇动事件");
 	      } 
 	    },
 	    removeShakeEvent: function(){
 	      if (window.DeviceMotionEvent) {  
-	        window.removeEventListener('devicemotion', this.deviceMotionHandler, false);  
+	        window.removeEventListener('devicemotion', pageControl.deviceMotionHandler, false);  
 	      }
 	    },
 	    deviceMotionHandler: function(eventData){
 	      var acceleration = eventData.accelerationIncludingGravity;
 	      var curTime = new Date().getTime();
 	      var speed = 0;
-
-	      if ((curTime - deviceData.lastUpdate) > 1500) {
+	      if ((curTime - deviceData.lastUpdate) > 100) {
 	          var diffTime = curTime - deviceData.lastUpdate;
 	          deviceData.lastUpdate = curTime;
 
@@ -303,13 +301,14 @@ var pageControl = (function () {
 
 	          speed = Math.abs(deviceData.x +deviceData.y + deviceData.z - deviceData.lx - deviceData.ly - deviceData.lz) / diffTime * 10000;
 	          deviceData.maxSpeed = speed > deviceData.maxSpeed ? speed :deviceData.maxSpeed;
+	          //$(".page1 .intro span").html(speed);
 	          var currentSpeed = 0;
 	          if ( speed >= SHAKE_THRESHOLD ) {
 	            deviceData.isTrigger = true;
 	          }else if( speed <= STOP_THRESHOLD && deviceData.isTrigger){
 	            deviceData.isTrigger = false;
 	            deviceData.maxSpeed = 0;
-
+	            deviceData.lastUpdate += 1500;
 	            $(".selection1").trigger(eventName.tap);
 	            //$(".page4 .logo").html("speed:"+speed.toFixed(2)+",max:"+deviceData.maxSpeed.toFixed(2));
 	          }
