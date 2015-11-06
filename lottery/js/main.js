@@ -15,7 +15,6 @@ var img_list = [
                 "img/random.png"
                 ];
 
-
 //我的选号组
 var mygroup = new Array();
 //期数
@@ -122,7 +121,10 @@ var pageControl = (function () {
     winheight = 960,     //页面高
     designWidth = 640,    //设计宽
     designHeight = 960,  //设计高
-    winscale = 1;         //页面缩放
+    winscale = 1,         //页面缩放
+    SHAKE_THRESHOLD = 1200,   //摇动事件触发阈值
+	STOP_THRESHOLD = 200,     //摇动停止触发阈值
+	deviceData = {x:0,y:0,z:0,lx:0,ly:0,lz:0,lastUpdate:0,isTrigger:false,maxSpeed:0 };  //设备数据，摇动用
 
 	return {
 	    init: function(){
@@ -147,6 +149,10 @@ var pageControl = (function () {
 				  'position': 'relative',
 				  'margin': '0 auto'
 				})
+				$(".page2 , .page3 ").css({
+					"-webkit-transform":"translateX("+designWidth+"px)",
+							"transform":"translateX("+designHeight+"px)"
+				});
 			}else{
 				$("body").width(winwidth).height(winheight);
 				$(".lottery").width(winwidth).height(winheight);
@@ -156,11 +162,11 @@ var pageControl = (function () {
 				            'transform': "scale("+winscale+")"
 				  });
 				}
+				$(".page2 , .page3 ").css({
+					"-webkit-transform":"translateX("+winwidth+"px)",
+							"transform":"translateX("+winwidth+"px)"
+				});
 			}
-			$(".page2 , .page3 ").css({
-				"-webkit-transform":"translateX("+winwidth+"px)",
-						"transform":"translateX("+winwidth+"px)"
-			});
 			preLoad.init();
 			pageControl.addEvent();
 		},
@@ -268,19 +274,13 @@ var pageControl = (function () {
 					lottery_run();
 				}
 			});
+			this.addShakeEvent();
 	    },
 	    addShakeEvent: function(){
 	      if (window.DeviceMotionEvent) {  
 	        window.addEventListener('devicemotion', this.deviceMotionHandler, false );  
 	      } else {  
-	        console.log("不支持摇动事件")
-	        //点击随机
-	        $(".page4 .logo").off().on(eventName.tap,(function(_this){
-	          return function(){
-	            var param = gameControl.getRandomResult();
-	            _this.createImage(param,_this.setMyResult);
-	          }
-	        }(this)));
+	        console.log("不支持摇动事件");
 	      } 
 	    },
 	    removeShakeEvent: function(){
@@ -293,7 +293,7 @@ var pageControl = (function () {
 	      var curTime = new Date().getTime();
 	      var speed = 0;
 
-	      if ((curTime - deviceData.lastUpdate) > 100) {
+	      if ((curTime - deviceData.lastUpdate) > 1500) {
 	          var diffTime = curTime - deviceData.lastUpdate;
 	          deviceData.lastUpdate = curTime;
 
@@ -306,14 +306,11 @@ var pageControl = (function () {
 	          var currentSpeed = 0;
 	          if ( speed >= SHAKE_THRESHOLD ) {
 	            deviceData.isTrigger = true;
-	            $(".shakeloading").removeClass("none");
 	          }else if( speed <= STOP_THRESHOLD && deviceData.isTrigger){
 	            deviceData.isTrigger = false;
 	            deviceData.maxSpeed = 0;
-	            deviceData.lastUpdate += 1500;
-	            $(".shakeloading").addClass("none");
-	            var param = gameControl.getRandomResult();
-	            pageControl.createImage(param,pageControl.setMyResult);
+
+	            $(".selection1").trigger(eventName.tap);
 	            //$(".page4 .logo").html("speed:"+speed.toFixed(2)+",max:"+deviceData.maxSpeed.toFixed(2));
 	          }
 	          deviceData.lx = deviceData.x;
@@ -346,25 +343,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	})
 	pageControl.init();
-	return;
 })
-
-function pageinit(){
-	winwidth = $(window).width();
-	winheight = $(window).height();
-	
-	var rem = winwidth / 32;
-	rem = rem.toFixed(1);
-	$("html").css("font-size",rem+"px");
-	$(".lottery").width(winwidth).height(winheight);
-	$(".page2 , .page3 ").css({
-		"-webkit-transform":"translateX("+winwidth+"px)",
-				"transform":"translateX("+winwidth+"px)"
-	});
-
-	pageControl.pageLoading("hide");
-}
-
 
 //------计算投注情况------//
 function count(){
@@ -927,7 +906,7 @@ contentSwipe.prototype.startEvent = function(e){
 	if(this.timer){
 		clearTimeout(this.timer);
 	}
-	$(_this.obj).css({
+	$(this.obj).css({
 		'-webkit-transition': "none",
 				'transition': "none"
 	});

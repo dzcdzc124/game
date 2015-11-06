@@ -125,14 +125,14 @@ body {font-family:Arial, '微软雅黑'; background-color:#f9f6f0; }
 /*** main ***/
 .lottery{width:100%; height:100%; position:absolute; overflow:hidden;}
 .page1{background-color:#f9f6f0; width:100%; height:100%; position:relative; top:0;left:0; z-index:1;overflow:hidden;}
-.page1 .intro{font-size: 28px; width:100%; height:60px; line-height:60px;  }
+.page1 .intro{font-size: 28px; width:100%; height:60px; line-height:60px; background-color: #f9f6f0; position: absolute; top: 0; left: 0; z-index: 19; }
 .page1 .intro span{text-indent:20px; color:#666;}
 .page1 .intro .gorule{font-size:28px;  width:140px; height:50px; margin:5px 20px 0 0; 
 	line-height:50px; border-radius:8px;
 	background-color:#4ed08c; color:#fff; font-size:30px; text-align:center;  
 }
 
-.main{  padding:20px 0 220px 0;}
+.main{ padding: 80px 0 220px 0;}
 .red-ball {overflow:hidden;width:600px; margin:0 auto 20px;}
 .red-ball li{background-color:#f1f1f1; border:2px solid #d4d4d4; border-radius:50%; color:red;
 	width:68px; height:68px; float:left; line-height:68px; text-align:center; font-size:36px;
