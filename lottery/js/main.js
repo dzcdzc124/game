@@ -12,14 +12,16 @@ var img_list = [
                 "img/intro.png",
                 "img/rule.png",
                 "img/result.png",
-                "img/random.png"
+                "img/random.png",
+                "img/win.png",
+                "img/lose.png"
                 ];
 
 //我的选号组
 var mygroup = new Array();
 //期数
 var now_issue = 0;
-var totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
+var totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false,time:0};
 var awardconfig = {
 		"1":5000000,
 		"2":150000,
@@ -42,7 +44,6 @@ var thiscount = {
 			"6":0,
 		},
 };
-
 
 var preLoad = {
   startTime : 0,        //开始时间
@@ -111,16 +112,22 @@ var preLoad = {
   }
 }
 
+var words = {
+	    		"phone" 	: "开奖太慢？嗯...你需要一部更快的手机",
+	    		"follow"	: "自古华山一条道，跟定这注了",
+	    		"default"	: "6啊6啊我要6啊",
+	    		"fail"		: "你让我上瘾，又让我心碎"
+			};
+
 var pageControl = (function () {
-  	var words = [
-	                  
-			],
-	rule_swipe = result_swipe = lottery_swipe = null,
-    statObj = null,       //统计组件
-    winwidth = 640,       //页面宽
-    winheight = 960,     //页面高
-    designWidth = 640,    //设计宽
-    designHeight = 960,  //设计高
+  	var rule_swipe = result_swipe = lottery_swipe = null,
+    statObj = null,       	//统计组件
+    winwidth = 640,       	//页面宽
+    winheight = 960,     	//页面高
+    designWidth = 640,    	//设计宽
+    designHeight = 960,  	//设计高
+    slideWidth = 640,    	//设计宽
+    slideHeight = 960,  	//设计高
     winscale = 1,         //页面缩放
     SHAKE_THRESHOLD = 1200,   //摇动事件触发阈值
 	STOP_THRESHOLD = 200,     //摇动停止触发阈值
@@ -149,10 +156,8 @@ var pageControl = (function () {
 				  'position': 'relative',
 				  'margin': '0 auto'
 				})
-				$(".page2 , .page3 ").css({
-					"-webkit-transform":"translateX("+designWidth+"px)",
-							"transform":"translateX("+designHeight+"px)"
-				});
+				slideWidth = designWidth;
+				slideHeight = designHeight;
 			}else{
 				$("body").width(winwidth).height(winheight);
 				$(".lottery").width(winwidth).height(winheight);
@@ -162,11 +167,13 @@ var pageControl = (function () {
 				            'transform': "scale("+winscale+")"
 				  });
 				}
-				$(".page2 , .page3 ").css({
-					"-webkit-transform":"translateX("+winwidth+"px)",
-							"transform":"translateX("+winwidth+"px)"
-				});
+				slideWidth = winwidth;
+				slideHeight = winheight;
 			}
+			$(".page2, .page3").css({
+				"-webkit-transform":"translateX("+slideWidth+"px)",
+						"transform":"translateX("+slideWidth+"px)"
+			});
 			preLoad.init();
 			pageControl.addEvent();
 		},
@@ -176,7 +183,7 @@ var pageControl = (function () {
 			result_swipe = new contentSwipe("resultcontent");
 
 			var isOld = CookieObj.get("isOld");
-			if(isOld){
+			if(isOld ){
 				$(".intro_level").hide();
 				$(".lottery").on("doubleTap", function(e){
 					e.preventDefault();
@@ -264,10 +271,11 @@ var pageControl = (function () {
 				$(".red-ball li,.blue-ball li").removeClass("active");
 				$(".result .running").html("<span>第1期</span>：拼命开奖中....");
 				now_issue = 0;
-				totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false};
+				totalcount = {input:0,output:0,offtax:0,rate:0,isWin:false,time:0};
 				count();
 			})	
 			
+			//开始
 			$(".bottom .commit").on(eventName.tap,function(){
 				if($(this).hasClass("on")){
 					lottery_run();
@@ -431,12 +439,27 @@ function lottery_run(){
 		"fnum"		: fnum,
 		"win_nums"	: {},
 	};
-	$(".page3").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
-	$(".bottom3 .goback").removeClass("on");
 	thiscount = {input:0,output:0,offtax:0,awardcount:{"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,}};
 	var thisinput = parseInt($(".count .s2 span").text());
 	thiscount.input = thisinput;
 	totalcount.input += thisinput;
+	totalcount.time ++;
+
+	$(".page3").animate({"-webkit-transform":"translateX(0px)","transform":"translateX(0px)"},200);
+	$(".result .retips").removeClass("wintips losetips").addClass("none");
+	$(".result .pacman").removeClass("none");
+	$(".bottom3 .goback").removeClass("on");
+
+	if( totalcount.time == 3 && totalcount.input > totalcount.offtax ){
+		$(".bottom3 .words").html(words.fail)
+	}else if( thisinput > 100000  ){
+		$(".bottom3 .words").html(words.phone)
+	}else if( num == 1 && fnum >= 50 && mygroup[0].red.length == 6 && mygroup[0].blue.length == 1 ){
+		$(".bottom3 .words").html(words.follow);
+	}else{
+		$(".bottom3 .words").html(words.default);
+	}
+
 	process(record);
 }
 
@@ -452,6 +475,7 @@ function lottery_run(){
  * }
  * 用record来保存工作场景，setTimeout分步运行开奖过程，防止js单线程运行时间过久造成假死
  */
+
 function process(record){
 	if(typeof record != "object") return;
 	
@@ -524,8 +548,11 @@ function process(record){
 	thtml += "<p>累计收入："+totalcount.offtax+"</p>";
 	thtml += "<p></p>";
 	$(".page3 .result .running").before(thtml);
+	$(".result .pacman").addClass("none");
+	$(".result .retips").removeClass("none").addClass( thiscount.input < thiscount.offtax ? "wintips" : "losetips");
+
 	if(thiscount.input > 200000){
-		$(".page3 .running").html("如果真拿彩票兑，眼睛都废了吧");
+		$(".page3 .running").html("好累，让我歇会");
 	}else{
 		$(".page3 .running").html("开奖结束");
 	}
