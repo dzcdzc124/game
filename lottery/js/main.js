@@ -452,12 +452,16 @@ function lottery_run(){
 
 	if( totalcount.time == 3 && totalcount.input > totalcount.offtax ){
 		$(".bottom3 .words").html(words.fail)
+		pageControl.statSave("show","words-fail");
 	}else if( thisinput > 100000  ){
 		$(".bottom3 .words").html(words.phone)
+		pageControl.statSave("show","words-phone");
 	}else if( num == 1 && fnum >= 50 && mygroup[0].red.length == 6 && mygroup[0].blue.length == 1 ){
 		$(".bottom3 .words").html(words.follow);
+		pageControl.statSave("show","words-follow");
 	}else{
 		$(".bottom3 .words").html(words.default);
+		pageControl.statSave("show","words-default");
 	}
 
 	process(record);

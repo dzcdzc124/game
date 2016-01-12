@@ -32,6 +32,12 @@
 	<script src="js/zepto.min.js"></script>
 	<script src="js/main.js"></script>	
     <title>500万怎么花？你已经规划了不止一遍了吧，就差今晚双色球开奖了...</title>
+
+	<?php 
+        $isWeiXin = strpos(strtolower($_SERVER['HTTP_USER_AGENT']), "micromessenger") !== FALSE;
+        $istoucanz = strpos($_SERVER["HTTP_HOST"],"toucanz")!==false;
+    ?>
+
 </head>
 <body>
 <!-- Author: Dantis qq:2205025961 -->
@@ -209,7 +215,10 @@
 </div>
 
 <div class="none">
+<?php if( $istoucanz ){ ?>
 	<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1257158641'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1257158641' type='text/javascript'%3E%3C/script%3E"));</script>
+<?php } ?>
 </div>
+
 </body>
 </html>
