@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<div class="bg" style="background-image: url(./img/1.jpg);"></div>
+<div class="bg" style=""></div>
 <div class="table">
     <div id="puzzle"></div>
 </div>
