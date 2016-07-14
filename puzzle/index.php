@@ -29,9 +29,11 @@
 <script src="js/zepto.min.js"></script>
 <script src="js/mobile.js"></script>
 
-<?php if (strpos($_SERVER["HTTP_HOST"],"toucanz")!==false){ ?>
+<?php if (strpos($_SERVER["HTTP_HOST"],"toucanz")!==false){ 
+    include_once "../baidu_js_push.php";
+?>
 <div class="none">
-    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1257158641'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1257158641' type='text/javascript'%3E%3C/script%3E"));</script>
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1259908850'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s95.cnzz.com/z_stat.php%3Fid%3D1259908850' type='text/javascript'%3E%3C/script%3E"));</script>
 </div>
 <?php } ?>
 </body>
