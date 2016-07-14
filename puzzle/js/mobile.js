@@ -91,7 +91,7 @@ $.fn.swipeHandle = function( handle ){
 $(document).ready(function() {
   var game = new puzzle({
     container: $("#puzzle"),
-    spaceBetween: 10
+    spaceBetween: 7
   })
   $(".list .item").on(eventName.tap, function(){
     if( $(this).hasClass('selected') ){
