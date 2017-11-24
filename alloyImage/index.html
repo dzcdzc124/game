@@ -1,0 +1,181 @@
+<!doctype>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style>
+            .main{
+                width: 600px;
+                margin: 0 auto;
+            }
+            .nav{
+                width: 100px;
+                height: 400px;
+                float: left;
+                margin: 0;
+                padding: 0;
+            }
+            .nav li{
+                height: 100px;
+                position: relative;
+                list-style: none;
+            }
+            .nav li img{
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                max-width: 80px;
+                max-height: 80px;
+                cursor: pointer;
+            }
+            .display{
+                height: 500px;
+                margin-left: 100px;
+                position: relative;
+            }
+            .display img{
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+                max-width: 400px;
+                max-height: 400px;
+            }
+            .tips{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <ul class="nav">
+                <li>
+                    <img src="./img/example1.jpg">
+                </li>
+                <li>
+                    <img src="./img/example2.jpg">
+                </li>
+            </ul>
+            <div class="display">
+                <img src="./img/example1.jpg">
+                <input type="hidden" value="./img/example1.jpg">
+            </div>
+            <div class="effects">
+                滤镜：
+                <select name="filter">
+                    <option value="原图">原图</option>
+                    <option value="灰度处理">灰度处理</option>
+                    <option value="反色">反色</option>
+                    <option value="灰度阈值">灰度阈值</option>
+                    <option value="高斯模糊">高斯模糊</option>
+                    <option value="浮雕效果">浮雕效果</option>
+                    <option value="查找边缘">查找边缘</option>
+                    <option value="马赛克">马赛克</option>
+                    <option value="油画">油画</option>
+                    <option value="腐蚀">腐蚀</option>
+                    <option value="锐化">锐化</option>
+                    <option value="添加杂色">添加杂色</option>
+                    <option value="暗角">暗角</option>
+                    <option value="喷点">喷点</option>
+                    <!-- <option value="降噪">降噪</option> -->
+                    <option value="棕褐色">棕褐色</option>
+                    <option value="色调分离">色调分离</option>
+                </select>
+                组合效果：
+                <select name="comeffect">
+                    <option value="原图">原图</option>
+                    <option value="美肤">美肤</option>
+                    <option value="素描">素描</option>
+                    <option value="自然增强">自然增强</option>
+                    <option value="紫调">紫调</option>
+                    <option value="柔焦">柔焦</option>
+                    <option value="复古">复古</option>
+                    <option value="黑白">黑白</option>
+                    <option value="仿lomo">仿lomo</option>
+                    <option value="亮白增强">亮白增强</option>
+                    <option value="灰白">灰白</option>
+                    <option value="灰色">灰色</option>
+                    <option value="暖秋">暖秋</option>
+                    <option value="木雕">木雕</option>
+                    <option value="粗糙">粗糙</option>
+                </select>
+            </div>
+            <div class="tips" style="display: none;">
+                转换中...
+            </div>
+        </div>
+        <script src='./js/alloyimage.js'></script>
+        <script>
+            var input = document.querySelector(".display input");
+
+            var displayImg = document.querySelector(".display img");
+
+            var navImgs = document.querySelectorAll(".nav img");
+
+            var tips = document.querySelector(".tips");
+
+            for(var i = 0; i < navImgs.length; i++){
+                navImgs[i].addEventListener("click", function(){
+                    displayImg.src = this.src;
+                    input.value = this.src;
+                })
+            }
+
+            var filter = document.querySelector("select[name=filter]");
+            filter.addEventListener("change", function(){
+                var effect = this.value;
+
+                if(effect == "原图"){
+                    displayImg.src = input.value;
+                    return;
+                }
+
+                tips.style.display = "block";
+
+                setTimeout(function(){
+
+                    var img = new Image();
+
+                    img.onload = function(){
+                        psLib(this).act(effect).replace(displayImg).complete(function(){
+                            tips.style.display = "none";
+                        });
+                    }
+
+                    img.src = input.value;
+
+                }, 10)
+            })
+
+            var comeffect = document.querySelector("select[name=comeffect]");
+            comeffect.addEventListener("change", function(){
+                var effect = this.value;
+
+                if(effect == "原图"){
+                    displayImg.src = input.value;
+                    return;
+                }
+
+                tips.style.display = "block";
+
+                setTimeout(function(){
+
+                    var img = new Image();
+
+                    img.onload = function(){
+                        psLib(this).ps(effect).replace(displayImg).complete(function(){
+                            tips.style.display = "none";
+                        });
+                    }
+
+                    img.src = input.value;
+
+                },10)
+            })
+        </script>
+    </body>
+</html>
